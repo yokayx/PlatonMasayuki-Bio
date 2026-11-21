@@ -1,0 +1,6 @@
+# For the optional standalone Caddy container (docker compose --profile standalone).
+# If you already run Caddy, add a site block to its existing configuration instead.
+masayuki.fun {
+    encode zstd gzip
+    reverse_proxy masayuki-bio:80
+}

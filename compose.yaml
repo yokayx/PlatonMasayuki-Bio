@@ -1,0 +1,36 @@
+services:
+  bio:
+    build: .
+    restart: unless-stopped
+    # Only accessible locally; Caddy handles public traffic and HTTPS.
+    ports:
+      - "127.0.0.1:8181:80"
+    networks:
+      default:
+        aliases:
+          - masayuki-bio
+
+  # Optional: use only if there is no existing Caddy (or other server) on 80/443.
+  caddy:
+    image: caddy:2-alpine
+    profiles: [standalone]
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - bio
+
+networks:
+  default:
+    # Stable name, so an existing Dockerized Caddy can join this network.
+    name: masayuki_bio_network
+
+volumes:
+  caddy_data:
+  caddy_config:
